@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Free Lance Board
 A DApp to faciliate free lance work and consumption of such work, utilising smart contracts to ensure both parties are fully protected unlike conventional sites where abuse is common.
 
@@ -44,6 +43,3 @@ Build Production
 ```
 npm run build
 ```
-=======
-# freeLanceBoard
->>>>>>> 693a0d2195423af72ad6984f66baa6e85d110fd1
