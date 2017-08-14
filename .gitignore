@@ -26,3 +26,4 @@ migrations
 build
 /box-img-lg.png
 /box-img-sm.png
+/src/index.js
