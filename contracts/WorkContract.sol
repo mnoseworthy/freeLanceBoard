@@ -1,7 +1,9 @@
-pragma solidity ^0.4.2;
+pragma solidity ^0.4.13;
 
 /* TODO
-*  Change work_offers to a mapping of address => workOffer
+*  - Change work_offers to a mapping of address => workOffer
+*  - Add mechanism to exit the GatheringDeposits based on time
+*  - Add mechanism for version history
 */
 contract WorkContract {
   /*
@@ -42,6 +44,11 @@ contract WorkContract {
     bool employer;
     bool worker;
   }
+  struct workFile{
+    string filename;  //This gives a storage warning, which is invalid. Should be patched soon.
+    bytes32 shasum;
+    uint uploadTime;
+  }
 
   // Contract Data
   uint public creationTime = now;
@@ -52,6 +59,8 @@ contract WorkContract {
   workOffer public accepted_offer;
 
   termAcceptance public term_acceptance = termAcceptance({ employer: false, worker: false});
+
+  mapping(uint => workFile) public submitted_files;
 
 
 
@@ -69,6 +78,9 @@ contract WorkContract {
 
   event DepositConfirmed();
   event DepositFailed();
+
+  event workSubmitted();
+  event workTerminated();
  
 
   /*
@@ -128,6 +140,11 @@ contract WorkContract {
   //Moves back a stage
   function previousStage() internal {
     stage = Stages(uint(stage) - 1);
+  }
+  // Moves stage to review
+  function moveToReview() internal {
+    stage = Stages.UnderReview;
+    status = Statuses.Disputing;
   }
   //Moves stage to finished
   function moveToFinished() internal {
@@ -231,7 +248,64 @@ contract WorkContract {
     nextStage();
     DepositConfirmed();
   }
-  
+  // If the employer decides at this point that he wants to exit, the contract should
+  // be revoked and locked from all member interaction.
+  function declineDeposit()
+    onlyBy(employer)
+    atStage(Stages.GatheringDeposits)
+  {
+    moveToFinished();
+    status = Statuses.Revoked;
+    DepositFailed();
+  }
+
+  /***
+  * Stage AwaitingJobCompletion
+  ***/
+  // Allow worker to submit work, which would be uploaded and stored off-chain. Only the
+  // shasum is stored onchain to ensure the file isn't tampered with during a review.
+  function submitWork(bytes32 _shasum, uint _fileNumber, string _filename)
+    onlyBy(worker)
+    atStage(Stages.AwaitingJobCompletion)
+  {
+    submitted_files[_fileNumber] = workFile({
+      filename: _filename,
+      shasum: _shasum,
+      uploadTime: now
+    });
+    workSubmitted();
+  }
+  // Allow worker to signal that they are done working
+  function jobComplete()
+    onlyBy(worker)
+    atStage(Stages.AwaitingJobCompletion)
+  {
+     nextStage();
+  }
+  // Allow employer to exit this stage, presumeably because a contract conditon
+  // was broken, this will automatically move the contract into the review stage
+  function terminateWork()
+    onlyBy(employer)
+    atStage(Stages.AwaitingJobCompletion)
+  {
+    moveToReview();
+    workTerminated();
+  }
+
+  /***
+  * Stage Finalize
+  ***/
+
+  /***
+  * Stage UnderReview
+  ***/
+
+  /***
+  * Stage Finished
+  ***/
+
+
+
   /*
   * Useful modifiers
   */
