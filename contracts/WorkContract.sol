@@ -1,5 +1,8 @@
 pragma solidity ^0.4.2;
 
+/* TODO
+*  Change work_offers to a mapping of address => workOffer
+*/
 contract WorkContract {
   /*
   * Construction Fields
@@ -7,7 +10,7 @@ contract WorkContract {
   // Contract Contributers
   address public employer = msg.sender;
   address public worker;
-  address[] public reviewer;
+  address[] public reviewers;
 
   // Contract Stages
   enum Stages {
@@ -26,10 +29,10 @@ contract WorkContract {
     Revoked,
     Disputing
   }
-
+  
   /// Typedefs
   struct workOffer{
-    uint account;
+    address account;
     uint price;
     uint duration;
     uint offer_date;
@@ -49,6 +52,8 @@ contract WorkContract {
   workOffer public accepted_offer;
 
   termAcceptance public term_acceptance = termAcceptance({ employer: false, worker: false});
+
+
 
   /*
   *   Events
@@ -84,8 +89,8 @@ contract WorkContract {
   // pretends a check that a function is called by an address in param array
   modifier onlyBySomeoneIn(address[] _accounts)
   {
-    pass = false;
-    for (i = 0; i < _accounts.length(); i++){
+    bool pass = false;
+    for (uint8 i = 0; i < _accounts.length; i++){
       if (_accounts[i] == msg.sender){
         pass = true;
       }
@@ -126,7 +131,7 @@ contract WorkContract {
   }
   //Moves stage to finished
   function moveToFinished() internal {
-    stage = Statuses.Finished;
+    stage = Stages.Finished;
   }
 
   /***
@@ -137,13 +142,14 @@ contract WorkContract {
     atStage(Stages.AcceptingOffers)
   {
     // Employer cannot bid on his own job
-    require(msg.sender != employer)
+    require(msg.sender != employer);
     // Add a new work offer
     work_offers.push(workOffer({
       account: msg.sender,
       price: _price,
       duration: _duration,
-      offer_date: now
+      offer_date: now,
+      accept_date: 0
     }));
     NewOffer();
   }
@@ -153,9 +159,10 @@ contract WorkContract {
     atStage(Stages.AcceptingOffers)
   {
     // Cannot accept more than one offer
-    require( !worker && !accepted_offer);
+    require( worker == 0 && accepted_offer.account == 0);
     // Accept the offer by updating accepted_offer and the current worker
-    for (offer in work_offers){
+    for (uint i = 0; i < work_offers.length; i ++){
+      workOffer memory offer = work_offers[i];
       if (offer.account == _worker_address){
         offer.accept_date = now;
         accepted_offer = offer;
@@ -193,7 +200,7 @@ contract WorkContract {
     }
     // If both parties agree, initate holding of funds
     if(term_acceptance.employer && term_acceptance.worker){
-     nextStage()
+     nextStage();
      TermsAccepted();
     }
   }
