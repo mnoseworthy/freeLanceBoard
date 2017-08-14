@@ -19,3 +19,10 @@ store.js
 css
 dashboard
 home
+config
+migrations
+/contracts/Migrations.sol
+/contracts/SimpleStorage.sol
+build
+/box-img-lg.png
+/box-img-sm.png
