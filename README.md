@@ -11,7 +11,12 @@ npm install ethereumjs-testrpc
 
 Download Box
 ```
-truffle unbox react-uport
+truffle unbox react-auth
+```
+
+Clone git and handle conflicts
+```
+git clone https://github.com/mnoseworthy/freeLanceBoard/
 ```
 
 Start testRPC
