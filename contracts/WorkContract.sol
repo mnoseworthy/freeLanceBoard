@@ -4,6 +4,9 @@ pragma solidity ^0.4.13;
 *  - Change work_offers to a mapping of address => workOffer
 *  - Add mechanism to exit the GatheringDeposits based on time
 *  - Add mechanism for version history
+*  - Write review contract
+*  - Write mechanisms to interact with review contract & stall this
+*   contract until the review is finished
 */
 contract WorkContract {
   /*
@@ -29,13 +32,14 @@ contract WorkContract {
     Active,
     Successful,
     Revoked,
-    Disputing
+    Disputed
   }
   
   /// Typedefs
   struct workOffer{
     address account;
     uint price;
+    uint review_deposit;
     uint duration;
     uint offer_date;
     uint accept_date;
@@ -53,14 +57,18 @@ contract WorkContract {
   // Contract Data
   uint public creationTime = now;
   Stages public stage = Stages.AcceptingOffers;
-  Statuses public status = Statuses.Active;
+  Statuses status = Statuses.Active;
 
   workOffer[] public work_offers;
   workOffer public accepted_offer;
 
-  termAcceptance public term_acceptance = termAcceptance({ employer: false, worker: false});
+  termAcceptance public contract_acceptance = termAcceptance({ employer: false, worker: false});
+
+  mapping(string => uint) account_ballances;
 
   mapping(uint => workFile) public submitted_files;
+
+  termAcceptance public work_acceptance = termAcceptance({employer: false, worker: false});
 
 
 
@@ -81,6 +89,9 @@ contract WorkContract {
 
   event workSubmitted();
   event workTerminated();
+
+  event contractFinalizing();
+  event contractFinalized();
  
 
   /*
@@ -126,7 +137,7 @@ contract WorkContract {
   }
   
   /*
-  * Stage Control
+  * Stage & Status Control
   */
   // Requires a function be called from certain stage
   modifier atStage(Stages _stage) {
@@ -144,18 +155,22 @@ contract WorkContract {
   // Moves stage to review
   function moveToReview() internal {
     stage = Stages.UnderReview;
-    status = Statuses.Disputing;
+    status = Statuses.Disputed;
   }
   //Moves stage to finished
   function moveToFinished() internal {
     stage = Stages.Finished;
+  }
+  //Changes the status to param status
+  function setStatus(Statuses _status) internal {
+    status = _status;
   }
 
   /***
   * Stage AcceptingOffers
   ***/
   // Allows anyone to make an offer on the job
-  function makeOffer(uint _price, uint _duration)
+  function makeOffer(uint _price, uint _review_deposit, uint _duration)
     atStage(Stages.AcceptingOffers)
   {
     // Employer cannot bid on his own job
@@ -164,6 +179,7 @@ contract WorkContract {
     work_offers.push(workOffer({
       account: msg.sender,
       price: _price,
+      review_deposit: _review_deposit,
       duration: _duration,
       offer_date: now,
       accept_date: 0
@@ -195,7 +211,7 @@ contract WorkContract {
     atStage(Stages.AcceptingOffers)
   {
     moveToFinished();
-    status = Statuses.Revoked;
+    setStatus(Statuses.Revoked);
     JobRemoved();
   }
 
@@ -209,14 +225,16 @@ contract WorkContract {
   {
     // Update term_acceptance
     if(msg.sender == employer){
-      term_acceptance.employer = true;
+      contract_acceptance.employer = true;
       EmployerAcceptTerms();
     }else if (msg.sender == worker){
-      term_acceptance.worker = true;
+      contract_acceptance.worker = true;
       WorkerAcceptTerms();
     }
     // If both parties agree, initate holding of funds
-    if(term_acceptance.employer && term_acceptance.worker){
+    if(contract_acceptance.employer && contract_acceptance.worker){
+     account_ballances['employer'] = 0;
+     account_ballances['worker'] = 0;
      nextStage();
      TermsAccepted();
     }
@@ -228,7 +246,7 @@ contract WorkContract {
   {
     delete worker;
     delete accepted_offer;
-    term_acceptance = termAcceptance({ employer: false, worker: false});
+    contract_acceptance = termAcceptance({ employer: false, worker: false});
     previousStage();
     OfferRevoked();
   }
@@ -238,13 +256,17 @@ contract WorkContract {
   ***/
   // This 
   // This ensures all conditions are met, and accepts the full agreed upon amount
-  // of funds.
+  // of funds, as well as a deposit for review if required.
   function acceptDeposit()
     payable
     onlyBy(employer)
     atStage(Stages.GatheringDeposits)
-    condition(msg.value == accepted_offer.price)
+    condition(msg.value == accepted_offer.price + accepted_offer.review_deposit)
   {
+    // review_deposit is a percentage of the total work price that will be used to
+    // settle disputes if required. If no dispute occurs, this is returned.
+    account_ballances['employer'] = accepted_offer.review_deposit;
+    account_ballances['worker'] = accepted_offer.price;
     nextStage();
     DepositConfirmed();
   }
@@ -255,7 +277,7 @@ contract WorkContract {
     atStage(Stages.GatheringDeposits)
   {
     moveToFinished();
-    status = Statuses.Revoked;
+    setStatus(Statuses.Revoked);
     DepositFailed();
   }
 
@@ -281,6 +303,7 @@ contract WorkContract {
     atStage(Stages.AwaitingJobCompletion)
   {
      nextStage();
+     contractFinalizing();
   }
   // Allow employer to exit this stage, presumeably because a contract conditon
   // was broken, this will automatically move the contract into the review stage
@@ -295,16 +318,90 @@ contract WorkContract {
   /***
   * Stage Finalize
   ***/
+  // Allow a party to signal that they're happy with the work and are ready to move
+  // the contract to finished
+  function signalSatisfaction()
+    onlyByEither(worker, employer)
+    atStage(Stages.Finalize)
+  {
+    if(msg.sender == worker){
+      work_acceptance.worker = true;
+    }else if (msg.sender == employer){
+      work_acceptance.employer = true;
+    }
+    if(work_acceptance.worker  && work_acceptance.employer){
+      moveToFinished();
+      setStatus(Statuses.Successful);
+      contractFinalized();     
+    }
+  }
+  // Allow a party to signal that they want an external review to resolve a conflict
+  function requestReview()
+    onlyByEither(worker, employer)
+    atStage(Stages.Finalize)
+  {
+    nextStage();
+    setStatus(Statuses.Disputed);
+  }
 
   /***
   * Stage UnderReview
   ***/
+  // Create a review contract
+  // Somehow lock this contract in this stage until the review contract signals resolved
+
 
   /***
   * Stage Finished
+  * This stage should be fully internal, handling distribution of funds currently locked into the
+  * contract and then locking the contract in an un-accessable state of some sort.
   ***/
+  // Contract finished without dispute, return the dispute portion to employer and pay full amount
+  // to worker
+  function successfulFinish() internal
+  {
+    uint employer_amount = account_ballances['employer']*2;
+    uint worker_amount = account_ballances['worker']*2;
+    account_ballances['employer'] = 0;
+    account_ballances['worker'] = 0;
+    employer.transfer(employer_amount/2);
+    worker.transfer(worker_amount/2);
+  }
+  // If the contract was under dispute, payment must be split between
+  // worker and all reviewers who participated
+  function setteledFinish() internal
+    condition(account_ballances['employer'] == accepted_offer.review_deposit)
+  {
+    // Calculate total amount to distribute amung reviewers
+    uint worker_amount = account_ballances["worker"] - accepted_offer.review_deposit;
+    uint reviewer_amount = account_ballances['employer'] + accepted_offer.review_deposit;
+    reviewer_amount = reviewer_amount / reviewers.length;
 
+    // Empty account_ballances
+    account_ballances['worker'] = 0;
+    account_ballances['employer'] = 0;
 
+    // Transfer funds
+    worker.transfer(worker_amount);
+    for(uint i = 0; i < reviewers.length; i++){
+      reviewers[i].transfer(reviewer_amount);
+    }
+
+  }
+  // Returns all funding to employer, empties all variables that may have been assigned to
+  // in attempting to aggree upon contract terms
+  function revokedFinish() internal
+    condition(account_ballances['employer'] == accepted_offer.review_deposit + accepted_offer.price)
+  {
+    uint  amount = account_ballances['employer'] * 2;
+    if (account_ballances['worker'] > 0){
+      amount += account_ballances['worker']*2;
+      account_ballances['worker'] = 0;
+    }
+    account_ballances['employer'] = 0; 
+    employer.transfer(amount/2);
+  }
+  
 
   /*
   * Useful modifiers
