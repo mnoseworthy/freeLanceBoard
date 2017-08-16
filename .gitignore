@@ -27,3 +27,6 @@ build
 /box-img-lg.png
 /box-img-sm.png
 /src/index.js
+/contracts/zeppelin
+/contracts/Authentication.sol
+/npm-debug.log
