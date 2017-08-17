@@ -30,3 +30,4 @@ build
 /contracts/zeppelin
 /contracts/Authentication.sol
 /npm-debug.log
+/truffle-box.json
