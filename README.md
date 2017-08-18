@@ -35,7 +35,30 @@ Run webpack for front-end hot reloading
 npm run start
 ```
 
-Component/Contract testing
+Download and Install Mongodb
+    https://www.mongodb.com/download-center
+
+
+Start mongo server
+```
+mongod.exe --dbpath "C:\apath"
+```
+
+Start the RESTful server
+```
+    cd rest_server
+    npm run start
+```
+
+## Checklist
+A fully-running and setup full-stack environment is running when:
+- testrpc is running
+- mongoDb is running
+- rest server is running
+- webpack development server is running
+
+
+# Component/Contract testing
 ```
 // Runs Jest for component tests.
 npm run test
