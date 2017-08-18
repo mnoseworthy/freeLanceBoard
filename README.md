@@ -3,52 +3,61 @@ A DApp to faciliate free lance work and consumption of such work, utilising smar
 
 # Setup Development Environment
 
-Install truffle & test RPC
+## Install required software
+
+
+Have node.js and npm installed.
+### Install truffle & test RPC globally
+
 ```
 npm install -g truffle // Version 3.0.5+ required.
-npm install ethereumjs-testrpc
+npm install -g ethereumjs-testrpc
 ```
 
-Download Box
-```
-truffle unbox react-auth
-```
+### Install MongoDb
 
-Clone git and handle conflicts
+Download and Install Mongodb:
+- https://www.mongodb.com/download-center
+
+
+## Clone git and install node modules
+
+
+### Clone the repository 
 ```
 git clone https://github.com/mnoseworthy/freeLanceBoard/
 ```
 
-Start testRPC
+### Install node modules
 ```
-node_modules/.bin/testrpc
-```
-
-Compile & Migrate contracts
-```
-truffle compile
-truffle migrate
+npm install
+cd rest_server
+npm install
 ```
 
-Run webpack for front-end hot reloading
-```
-npm run start
-```
-
-Download and Install Mongodb
-    https://www.mongodb.com/download-center
 
 
-Start mongo server
+## Start Servers
+
+### Start the mongo db server
 ```
 mongod.exe --dbpath "C:\apath"
 ```
+### Start the testrpc server
+```
+testrpc
+```
+### Start the webpack development server
+```
+npm run start
+```
+### Start the express development server
+```
+cd rest_server
+npm run start
+```
 
-Start the RESTful server
-```
-    cd rest_server
-    npm run start
-```
+
 
 ## Checklist
 A fully-running and setup full-stack environment is running when:
@@ -59,6 +68,13 @@ A fully-running and setup full-stack environment is running when:
 
 
 # Component/Contract testing
+
+### Compile & Migrate contracts to testrpc // eth network
+```
+truffle compile
+truffle migrate
+```
+### Jest
 ```
 // Runs Jest for component tests.
 npm run test
@@ -67,7 +83,7 @@ npm run test
 truffle test
 ```
 
-Build Production
+### Build Production
 ```
 npm run build
 ```
