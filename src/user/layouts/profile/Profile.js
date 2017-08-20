@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ProfileFormContainer from '../../ui/profileform/ProfileFormContainer'
+import ContractTableContainer from '../../../workboard/ui/contracttable/ContractTableContainer'
 
 class Profile extends Component {
   render() {
@@ -10,6 +11,9 @@ class Profile extends Component {
             <h1>Profile</h1>
             <p>Edit your account details here.</p>
             <ProfileFormContainer />
+
+            <br />
+            <ContractTableContainer />
           </div>
         </div>
       </main>

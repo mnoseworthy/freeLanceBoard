@@ -2,7 +2,8 @@ var express = require('express'),
   app = express(),
   port = process.env.PORT || 3001,
   mongoose = require('mongoose'),
-  User = require('./api/models/userModel'), //created model loading here
+  User = require('./api/models/userModel'),
+  Contract = require('./api/models/contractModel'), 
   bodyParser = require('body-parser'),
   cors = require('cors');
   
@@ -37,6 +38,10 @@ app.use(function (req, res, next) {
 //register user routes
 var userRoutes = require('./api/routes/userRoutes'); //importing routes
 userRoutes(app); 
+//register contract routes
+var contractRoutes = require('./api/routes/contractRoutes'); //importing routes
+contractRoutes(app); 
+
 
 
 //Handle invalid responses

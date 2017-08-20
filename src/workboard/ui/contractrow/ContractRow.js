@@ -9,7 +9,8 @@ class ContractRow extends Component {
         name: props.name,
         type: props.type,
         payout: props.payout,
-        status: props.status
+        status: props.status,
+        creationDate: props.creationDate
     }
   }
   // When the row is clicked, navigate to the contract's page
@@ -20,12 +21,15 @@ class ContractRow extends Component {
 
   //Render the row containing data for this contract
   render(){
-    <tr onClick={this.handleClick.bind(this)}>
-        <td>{this.state.name}</td>
-        <td>{this.state.type}</td>
-        <td>{this.state.payout}</td>
-        <td>{this.state.status}</td>
-    </tr>
+    return(
+      <tr onClick={this.handleClick.bind(this)}>
+          <td>{this.state.name}</td>
+          <td>{this.state.type}</td>
+          <td>{this.state.payout}</td>
+          <td>{this.state.status}</td>
+          <td>{this.state.creationDate}</td>
+      </tr>
+    )
   }
 }
 
