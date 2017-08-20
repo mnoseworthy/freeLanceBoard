@@ -12,6 +12,8 @@ import Home from './layouts/home/Home'
 import Dashboard from './layouts/dashboard/Dashboard'
 import SignUp from './user/layouts/signup/SignUp'
 import Profile from './user/layouts/profile/Profile'
+import Workboard from './workboard/layouts/workboard/WorkBoard'
+import ContractPage from './workboard/layouts/contractpage/ContractPage'
 
 // Redux Store
 import store from './store'
@@ -36,6 +38,8 @@ ReactDOM.render((
           <Route path="dashboard" component={UserIsAuthenticated(Dashboard)} />
           <Route path="signup" component={UserIsNotAuthenticated(SignUp)} />
           <Route path="profile" component={UserIsAuthenticated(Profile)} />
+          <Route path="workboard" component={Workboard} />
+          <Route path="contractpage" component={ContractPage} />
         </Route>
       </Router>
     </Provider>

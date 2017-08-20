@@ -40,6 +40,9 @@ class App extends Component {
         <nav className="navbar pure-menu pure-menu-horizontal">
           <Link to="/" className="pure-menu-heading pure-menu-link">Truffle Box</Link>
           <ul className="pure-menu-list navbar-right">
+            <li className="pure-menu-item">
+              <Link to="/workboard" className="pure-menu-link">Workboard</Link>
+            </li>
             <OnlyGuestLinks />
             <OnlyAuthLinks />
           </ul>

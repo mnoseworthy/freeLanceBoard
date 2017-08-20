@@ -11,9 +11,10 @@ function activeContract(address) {
 }
 
 export function navigateToContractPage(address) {
+  console.log('in action')
+    browserHistory.push('/contractpage')
     return function(dispatch){
-        dispatch(activeContract({"address": address}))
-        return browserHistory.push('/contractpage')
+        return dispatch(activeContract(address))
     }
     
 }

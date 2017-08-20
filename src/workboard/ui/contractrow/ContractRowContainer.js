@@ -8,8 +8,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onContractRowClick: (event) => {
-      event.preventDefault();
+    contractRowClick: (address) => {
       dispatch(navigateToContractPage(this.address))
     }
   }
