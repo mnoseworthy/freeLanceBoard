@@ -2,7 +2,7 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import userReducer from './user/userReducer'
 import web3Reducer from './util/web3/web3Reducer'
-import workBoardReducer from './workboard/workBoardReducer'
+import workBoardReducer from './workboard/workboardReducer'
 
 
 const reducer = combineReducers({

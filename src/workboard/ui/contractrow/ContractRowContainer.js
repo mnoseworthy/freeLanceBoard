@@ -3,13 +3,15 @@ import ContractRow from './ContractRow'
 import { navigateToContractPage } from './ContractRowActions'
 
 const mapStateToProps = (state, ownProps) => {
-  return {}
+  return {
+
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     contractRowClick: (address) => {
-      dispatch(navigateToContractPage(this.address))
+      dispatch(navigateToContractPage(address))
     }
   }
 }

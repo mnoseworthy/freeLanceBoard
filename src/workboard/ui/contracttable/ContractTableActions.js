@@ -1,5 +1,5 @@
 import request from 'request-json'
-import ContractRow from '../contractrow/ContractRow'
+import ContractRowContainer from '../contractrow/ContractRowContainer'
 import store from '../../../store'
 import React from 'react'
 
@@ -45,9 +45,8 @@ export function updateTableRows(){
           let rows = []
           for(var i = 0; i < currentContracts.length; i++){
             let contract = currentContracts[i]
-            rows.push(<ContractRow key={contract.address} name={contract.name} type={contract.type} payout={contract.payout} status={contract.status} creationDate={contract.creationDate}/>)
+            rows.push(<ContractRowContainer key={contract.address} address={contract.address} name={contract.name} type={contract.type} payout={contract.payout} status={contract.status} creationDate={contract.creationDate}/>)
           }
-          console.log(rows)
           dispatch(updateTableRowsAction(rows))    
         }
     }

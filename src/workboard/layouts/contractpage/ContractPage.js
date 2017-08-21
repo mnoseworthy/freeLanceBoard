@@ -2,9 +2,14 @@
 *
 */
 import React, { Component } from 'react'
+import store from '../../../store'
 
 
 class Workboard extends Component {
+
+  componentDidMount(){
+    console.log(store.getState())
+  }
   render() {
     return(
       <main className="container">

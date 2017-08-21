@@ -1,6 +1,6 @@
 import { browserHistory } from 'react-router'
 import store from '../../../store'
-export const USER_LOGGED_IN = 'USER_LOGGED_IN'
+
 
 export const CHANGE_ACTIVE_CONTRACT = "CHANGE_ACTIVE_CONTRACT"
 function activeContract(address) {
@@ -10,11 +10,10 @@ function activeContract(address) {
   }
 }
 
-export function navigateToContractPage(address) {
-  console.log('in action')
-    browserHistory.push('/contractpage')
+export function navigateToContractPage(address) { 
     return function(dispatch){
-        return dispatch(activeContract(address))
+        dispatch(activeContract(address))
+        browserHistory.push('/contractpage')
     }
     
 }
