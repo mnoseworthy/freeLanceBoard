@@ -1,8 +1,33 @@
 /truffle-config.js
 node_modules
 package-lock.json
+<<<<<<< HEAD
 migrations
 build
 /npm-debug.log
 /truffle-box.json
 /rest_server/package-lock.json
+=======
+truffle.js
+fonts
+img
+user
+util
+App.css
+App.js
+App.test.js
+index.css
+reducer.js
+store.js
+css
+dashboard
+home
+configmigrations/contracts/Migrations.sol
+/contracts/SimpleStorage.sol
+build
+/box-img-lg.png
+/box-img-sm.png
+/contracts/zeppelin
+/contracts/Authentication.sol
+/contracts/Migrations.sol
+>>>>>>> remotes/origin/0_work_contract
