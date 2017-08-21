@@ -12,8 +12,9 @@ contract WorkContract {
   /*
   * Construction Fields
   */
+
   // Contract Contributers
-  address public employer = msg.sender;
+  address public employer;
   address public worker;
   address[] public reviewers;
 
@@ -36,7 +37,7 @@ contract WorkContract {
   }
   
   /// Typedefs
-  struct workOffer{
+  struct workOffer {
     address account;
     uint price;
     uint review_deposit;
@@ -44,37 +45,20 @@ contract WorkContract {
     uint offer_date;
     uint accept_date;
   }
-  struct termAcceptance{
+  struct termAcceptance {
     bool employer;
     bool worker;
   }
-  struct workFile{
+  struct workFile {
     string filename;  //This gives a storage warning, which is invalid. Should be patched soon.
     bytes32 shasum;
     uint uploadTime;
   }
 
-  // Contract Data
-  uint public creationTime = now;
-  Stages public stage = Stages.AcceptingOffers;
-  Statuses status = Statuses.Active;
-
-  workOffer[] public work_offers;
-  workOffer public accepted_offer;
-
-  termAcceptance public contract_acceptance = termAcceptance({ employer: false, worker: false});
-
-  mapping(string => uint) account_ballances;
-
-  mapping(uint => workFile) public submitted_files;
-
-  termAcceptance public work_acceptance = termAcceptance({employer: false, worker: false});
-
-
-
   /*
   *   Events
   */
+  
   event NewOffer();
   event OfferAccepted();
   event JobRemoved();
@@ -92,7 +76,49 @@ contract WorkContract {
 
   event contractFinalizing();
   event contractFinalized();
- 
+
+  /*
+  * Contract Data
+  */
+  uint public creationTime;
+  Stages public stage;
+  Statuses status;
+
+  workOffer[] public work_offers;
+  workOffer public accepted_offer;
+
+  termAcceptance public contract_acceptance;
+
+  mapping(string => uint) account_ballances;
+
+  mapping(uint => workFile) public submitted_files;
+
+  termAcceptance public work_acceptance;
+
+  /*
+  * Constructor
+  */
+  function WorkContract() {
+    require(tx.origin != employer);
+    employer = tx.origin;
+    creationTime = now;
+    stage = Stages.AcceptingOffers;
+    status = Statuses.Active;
+    contract_acceptance = termAcceptance({ employer: false, worker: false});
+    work_acceptance = termAcceptance({employer: false, worker: false});
+  }
+  function getEmployer() constant returns ( address ) {
+    return (employer);
+  }
+  // Return an 'update' of the stage, status, and particapants
+  function getUpdate(address) constant returns (    
+    address,
+    address,
+    address[],
+    uint
+  ) {
+    return (employer, worker,  reviewers, creationTime);
+  }
 
   /*
   * Ownership control
@@ -113,8 +139,8 @@ contract WorkContract {
   modifier onlyBySomeoneIn(address[] _accounts)
   {
     bool pass = false;
-    for (uint8 i = 0; i < _accounts.length; i++){
-      if (_accounts[i] == msg.sender){
+    for (uint8 i = 0; i < _accounts.length; i++) {
+      if (_accounts[i] == msg.sender) {
         pass = true;
       }
     }
@@ -194,9 +220,9 @@ contract WorkContract {
     // Cannot accept more than one offer
     require( worker == 0 && accepted_offer.account == 0);
     // Accept the offer by updating accepted_offer and the current worker
-    for (uint i = 0; i < work_offers.length; i ++){
+    for (uint i = 0; i < work_offers.length; i ++) {
       workOffer memory offer = work_offers[i];
-      if (offer.account == _worker_address){
+      if (offer.account == _worker_address) {
         offer.accept_date = now;
         accepted_offer = offer;
         worker = _worker_address;
@@ -224,17 +250,17 @@ contract WorkContract {
     atStage(Stages.ReviewContract)
   {
     // Update term_acceptance
-    if(msg.sender == employer){
+    if(msg.sender == employer) {
       contract_acceptance.employer = true;
       EmployerAcceptTerms();
-    }else if (msg.sender == worker){
+    }else if (msg.sender == worker) {
       contract_acceptance.worker = true;
       WorkerAcceptTerms();
     }
     // If both parties agree, initate holding of funds
-    if(contract_acceptance.employer && contract_acceptance.worker){
-     account_ballances['employer'] = 0;
-     account_ballances['worker'] = 0;
+    if(contract_acceptance.employer && contract_acceptance.worker) {
+     account_ballances["employer"] = 0;
+     account_ballances["worker"] = 0;
      nextStage();
      TermsAccepted();
     }
@@ -265,8 +291,8 @@ contract WorkContract {
   {
     // review_deposit is a percentage of the total work price that will be used to
     // settle disputes if required. If no dispute occurs, this is returned.
-    account_ballances['employer'] = accepted_offer.review_deposit;
-    account_ballances['worker'] = accepted_offer.price;
+    account_ballances["employer"] = accepted_offer.review_deposit;
+    account_ballances["worker"] = accepted_offer.price;
     nextStage();
     DepositConfirmed();
   }
@@ -324,12 +350,12 @@ contract WorkContract {
     onlyByEither(worker, employer)
     atStage(Stages.Finalize)
   {
-    if(msg.sender == worker){
+    if(msg.sender == worker) {
       work_acceptance.worker = true;
-    }else if (msg.sender == employer){
+    }else if (msg.sender == employer) {
       work_acceptance.employer = true;
     }
-    if(work_acceptance.worker  && work_acceptance.employer){
+    if(work_acceptance.worker && work_acceptance.employer) {
       moveToFinished();
       setStatus(Statuses.Successful);
       contractFinalized();     
@@ -358,32 +384,31 @@ contract WorkContract {
   ***/
   // Contract finished without dispute, return the dispute portion to employer and pay full amount
   // to worker
-  function successfulFinish() internal
-  {
-    uint employer_amount = account_ballances['employer']*2;
-    uint worker_amount = account_ballances['worker']*2;
-    account_ballances['employer'] = 0;
-    account_ballances['worker'] = 0;
+  function successfulFinish() internal {
+    uint employer_amount = account_ballances["employer"]*2;
+    uint worker_amount = account_ballances["worker"]*2;
+    account_ballances["employer"] = 0;
+    account_ballances["worker"] = 0;
     employer.transfer(employer_amount/2);
     worker.transfer(worker_amount/2);
   }
   // If the contract was under dispute, payment must be split between
   // worker and all reviewers who participated
   function setteledFinish() internal
-    condition(account_ballances['employer'] == accepted_offer.review_deposit)
+    condition(account_ballances["employer"] == accepted_offer.review_deposit)
   {
     // Calculate total amount to distribute amung reviewers
     uint worker_amount = account_ballances["worker"] - accepted_offer.review_deposit;
-    uint reviewer_amount = account_ballances['employer'] + accepted_offer.review_deposit;
+    uint reviewer_amount = account_ballances["employer"] + accepted_offer.review_deposit;
     reviewer_amount = reviewer_amount / reviewers.length;
 
     // Empty account_ballances
-    account_ballances['worker'] = 0;
-    account_ballances['employer'] = 0;
+    account_ballances["worker"] = 0;
+    account_ballances["employer"] = 0;
 
     // Transfer funds
     worker.transfer(worker_amount);
-    for(uint i = 0; i < reviewers.length; i++){
+    for(uint i = 0; i < reviewers.length; i++) {
       reviewers[i].transfer(reviewer_amount);
     }
 
@@ -391,14 +416,14 @@ contract WorkContract {
   // Returns all funding to employer, empties all variables that may have been assigned to
   // in attempting to aggree upon contract terms
   function revokedFinish() internal
-    condition(account_ballances['employer'] == accepted_offer.review_deposit + accepted_offer.price)
+    condition(account_ballances["employer"] == accepted_offer.review_deposit + accepted_offer.price)
   {
-    uint  amount = account_ballances['employer'] * 2;
-    if (account_ballances['worker'] > 0){
-      amount += account_ballances['worker']*2;
-      account_ballances['worker'] = 0;
+    uint  amount = account_ballances["employer"] * 2;
+    if (account_ballances["worker"] > 0) {
+      amount += account_ballances["worker"]*2;
+      account_ballances["worker"] = 0;
     }
-    account_ballances['employer'] = 0; 
+    account_ballances["employer"] = 0; 
     employer.transfer(amount/2);
   }
   

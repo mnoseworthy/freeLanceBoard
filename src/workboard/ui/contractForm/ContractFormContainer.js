@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
-import SignUpForm from './SignUpForm'
-import { signUpUser } from './SignUpFormActions'
+import ContractForm from './ContractForm'
+import { createWorkContract } from './ContractFormActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {}
@@ -10,15 +10,14 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onSignUpFormSubmit: (name) => {
       event.preventDefault();
-
-      dispatch(signUpUser(name))
+      createWorkContract(name)
     }
   }
 }
 
-const SignUpFormContainer = connect(
+const ContractFormContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignUpForm)
+)(ContractForm)
 
-export default SignUpFormContainer
+export default ContractFormContainer

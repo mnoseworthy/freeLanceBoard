@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 
-class SignUpForm extends Component {
+class ContractForm extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      name: ''
+      address: this.props.address
     }
   }
 
@@ -41,4 +41,4 @@ class SignUpForm extends Component {
   }
 }
 
-export default SignUpForm
+export default ContractForm
