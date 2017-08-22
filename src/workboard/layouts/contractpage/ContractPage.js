@@ -3,20 +3,32 @@
 */
 import React, { Component } from 'react'
 import store from '../../../store'
+import { HiddenOnlyAuth, VisibleOnlyAuth } from '../../../util/wrappers.js'
+import ObserverViewContainer from '../../ui/observerView/ObserverViewContainer'
+import EmployerViewContainer from '../../ui/employerView/EmployerViewContainer'
+import WorkerViewContainer from '../../ui/workerView/WorkerViewContainer'
+import ReviewerViewContainer from '../../ui/reviewerView/ReviewerViewContainer'
 
-
-class Workboard extends Component {
-
-  componentDidMount(){
-    console.log(store.getState())
-  }
+class ContractPage extends Component {
   render() {
+  let OnlyAuthDoms = VisibleOnlyAuth(() =>
+    <div>
+      <EmployerViewContainer />
+      <WorkerViewContainer />
+      <ReviewerViewContainer />
+    </div>
+  )
+  let OnlyGuestDoms = HiddenOnlyAuth(() =>
+    <div>
+      <ObserverViewContainer />
+    </div>
+  )
     return(
       <main className="container">
         <div className="pure-g">
           <div className="pure-u-1-1">
-            <h1>Contract</h1>
-            <p>This page displays information about a contract clicked in the contractTable</p>
+          <OnlyAuthDoms />
+          <OnlyGuestDoms />
           </div>
         </div>
       </main>
@@ -24,4 +36,4 @@ class Workboard extends Component {
   }
 }
 
-export default Workboard
+export default ContractPage
