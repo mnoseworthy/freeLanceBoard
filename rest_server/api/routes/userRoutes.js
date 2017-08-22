@@ -5,6 +5,9 @@ module.exports = function(app) {
   // User Routes
   app.route('/user')
     .post(user.add_new_user);
+  
+  app.route('/users')
+    .get(user.get_all_users);
 
   app.route('/user/:coinbase')
     .get(user.get_user_info)

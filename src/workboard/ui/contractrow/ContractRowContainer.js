@@ -3,9 +3,7 @@ import ContractRow from './ContractRow'
 import { navigateToContractPage } from './ContractRowActions'
 
 const mapStateToProps = (state, ownProps) => {
-  return {
-
-  }
+  return {}
 }
 
 const mapDispatchToProps = (dispatch) => {

@@ -1,40 +1,66 @@
 import React, { Component } from 'react'
+import RichTextEditor from 'react-rte'
 
 class ContractForm extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
-      address: this.props.address
+      title: '',
+      rteValue: RichTextEditor.createEmptyValue(),
+      description: '',
+      payout: 0
     }
   }
 
-  onInputChange(event) {
-    this.setState({ name: event.target.value })
+  onTitleChange(event) {
+    this.setState({ title: event.target.value })
+  }
+
+  onRteChange(event) {
+    this.setState({rteValue:event})
+  }
+
+  onPayoutChange(event){
+    this.setState({payout:event.target.value})
   }
 
   handleSubmit(event) {
     event.preventDefault()
-
-    if (this.state.name.length < 2)
+    if (this.state.title.length < 2)
     {
-      return alert('Please fill in your name.')
+      return alert('Please add a title.')
     }
-
-    this.props.onSignUpFormSubmit(this.state.name)
+    if (this.state.rteValue === RichTextEditor.createEmptyValue())
+    {
+      return alert('You must add a description !')
+    }
+    if ( this.state.payout <= 0)
+    {
+      return alert('You must enter a payout, and it must be a number greater than 0.')
+    }
+    // Save text editor state as a HTML string
+    this.setState({description : event.toString('html')})
+    this.props.onContractFormSubmit(this.state)
   }
 
   render() {
     return(
       <form className="pure-form pure-form-stacked" onSubmit={this.handleSubmit.bind(this)}>
         <fieldset>
-          <label htmlFor="name">Name</label>
-          <input id="name" type="text" value={this.state.name} onChange={this.onInputChange.bind(this)} placeholder="Name" />
-          <span className="pure-form-message">This is a required field.</span>
-
+          <label htmlFor="title">Job Title</label>
+          <input id="title" type="text" value={this.state.title} onChange={this.onTitleChange.bind(this)} placeholder="Title..." />
           <br />
 
-          <button type="submit" className="pure-button pure-button-primary">Sign Up</button>
+          <label htmlFor="description">Description</label>
+          <RichTextEditor id="description" value={this.state.rteValue} onChange={this.onRteChange.bind(this)} />
+          <br />
+
+          <label htmlFor="payout">Payment Amount</label>
+          <input id="payout" type="number" value={this.state.payout} onChange={this.onPayoutChange.bind(this)} />
+          <br />
+
+
+          <button type="submit" className="pure-button pure-button-primary">Submit</button>
         </fieldset>
       </form>
     )

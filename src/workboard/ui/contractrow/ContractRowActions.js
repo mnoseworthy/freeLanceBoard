@@ -1,5 +1,4 @@
 import { browserHistory } from 'react-router'
-import store from '../../../store'
 
 
 export const CHANGE_ACTIVE_CONTRACT = "CHANGE_ACTIVE_CONTRACT"

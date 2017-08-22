@@ -5,7 +5,7 @@ class ContractRow extends Component {
     super(props)
     this.state = {
         address: props.address,
-        name: props.name,
+        title: props.title,
         type: props.type,
         payout: props.payout,
         status: props.status,
@@ -21,7 +21,7 @@ class ContractRow extends Component {
   render(){
     return(
       <tr onClick={this.handleRowClick.bind(this)} >
-          <td>{this.state.name}</td>
+          <td>{this.state.title}</td>
           <td>{this.state.type}</td>
           <td>{this.state.payout}</td>
           <td>{this.state.status}</td>

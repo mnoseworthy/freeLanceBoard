@@ -7,9 +7,23 @@ var ContractSchema = new Schema({
     type: String,
     Required: "The contract must have an address."
   },
-  name: {
+  employer: {
+    type: String,
+    Required: "The contract must have an owner..."
+  },
+  worker: {
+    type: String
+  },
+  reviewers: {
+    type: [String]
+  },
+  title: {
     type: String,
     Required: "The contract must have a title"
+  },
+  description: {
+    type: String,
+    Required: "The contract must have a description"
   },
   type: {
       type: String,
@@ -35,7 +49,7 @@ var ContractSchema = new Schema({
   },
   creationDate: {
     type: Date,
-    Required: "The contract must have been created at some date"
+    default: Date.now
   }
 })
 

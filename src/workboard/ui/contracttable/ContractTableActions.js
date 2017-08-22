@@ -23,7 +23,7 @@ export function updateContractList() {
     //Make database call to get the list of contracts 
     client.get('contract/').then( function(res){
         contracts = res.body
-        dispatch(updateContractListAction( contracts)) 
+        dispatch(updateContractListAction( contracts )) 
     })
   }
 }
@@ -45,7 +45,7 @@ export function updateTableRows(){
           let rows = []
           for(var i = 0; i < currentContracts.length; i++){
             let contract = currentContracts[i]
-            rows.push(<ContractRowContainer key={contract.address} address={contract.address} name={contract.name} type={contract.type} payout={contract.payout} status={contract.status} creationDate={contract.creationDate}/>)
+            rows.push(<ContractRowContainer key={contract.address} address={contract.address} title={contract.title} type={contract.type} payout={contract.payout} status={contract.status} creationDate={contract.creationDate}/>)
           }
           dispatch(updateTableRowsAction(rows))    
         }

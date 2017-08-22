@@ -8,9 +8,9 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSignUpFormSubmit: (name) => {
+    onContractFormSubmit: (state) => {
       event.preventDefault();
-      createWorkContract(name)
+      dispatch(createWorkContract(state))
     }
   }
 }
