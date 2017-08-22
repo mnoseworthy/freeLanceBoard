@@ -14,6 +14,7 @@ import SignUp from './user/layouts/signup/SignUp'
 import Profile from './user/layouts/profile/Profile'
 import Workboard from './workboard/layouts/workboard/WorkBoard'
 import ContractPage from './workboard/layouts/contractpage/ContractPage'
+import CreateContract from './workboard/layouts/createcontract/CreateContract'
 
 // Redux Store
 import store from './store'
@@ -40,6 +41,7 @@ ReactDOM.render((
           <Route path="profile" component={UserIsAuthenticated(Profile)} />
           <Route path="workboard" component={Workboard} />
           <Route path="contractpage" component={ContractPage} />
+          <Route path="createcontract" component={CreateContract} />
         </Route>
       </Router>
     </Provider>
