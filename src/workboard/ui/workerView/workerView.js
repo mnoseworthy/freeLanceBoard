@@ -11,7 +11,7 @@ class WorkerView extends Component {
 
   render() {
     return(
-        <p>hi</p>
+        <p>Worker</p>
     )
   }
 }

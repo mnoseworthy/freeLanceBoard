@@ -15,9 +15,10 @@ var UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  contracts: {
-    type: [String]
-  }
+  contracts: [{
+    address: String,
+    role: String
+  }]
 })
 
 module.exports = mongoose.model("Users", UserSchema)

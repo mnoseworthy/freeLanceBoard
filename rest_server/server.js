@@ -9,7 +9,7 @@ var express = require('express'),
   
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/test0'); 
+mongoose.connect('mongodb://localhost/test1'); 
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));

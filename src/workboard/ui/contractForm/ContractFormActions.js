@@ -54,7 +54,7 @@ export function createWorkContract(state) {
                         }) 
                         
                         // Add contract to user's list
-                        client.post('user/'+coinbase, {"contracts":instance.address}, function (err, res, body){
+                        client.post('user/'+coinbase, {"contracts":{address: instance.address, role: "Employer"}}, function (err, res, body){
                             if(err)
                                 console.error(err)
                             return console.log(res.statusCode)

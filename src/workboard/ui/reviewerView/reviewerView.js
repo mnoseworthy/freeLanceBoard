@@ -15,7 +15,7 @@ class ReviewerView extends Component {
 
   render() {
     return(
-        <p>hi</p>
+        <p>Reviewer</p>
     )
   }
 }
