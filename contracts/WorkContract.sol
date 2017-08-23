@@ -110,15 +110,36 @@ contract WorkContract {
   function getEmployer() constant returns ( address ) {
     return (employer);
   }
-  // Return an 'update' of the stage, status, and particapants
-  function getUpdate(address) constant returns (    
+  
+  /*
+  *   .call() functions that cost no gas, are used
+  *   to retrieve values.
+  */
+  // Return the addresses of everyone involved in the contract
+  function getParticipants() constant returns (    
     address,
     address,
-    address[],
-    uint
+    address[]
   ) {
-    return (employer, worker,  reviewers, creationTime);
+    return (employer, worker,  reviewers);
   }
+  // Return the current stage of the contract, the mapping will be stored in JS
+  function getStage() constant returns ( uint ) {
+    return uint(stage);  
+  }
+  // Return the current status of the contract, the mapping will be stored in JS
+  function getStatus() constant returns ( uint ) { 
+    return uint(status);
+  }
+  // Return the current contract_acceptance, [bool, bool] => [employer, worker]
+  function getContractAcceptance() returns ( bool[2] ) {
+    return [contract_acceptance.employer, contract_acceptance.worker];
+  }
+  // Return the current work_acceptance
+  function getWorkAcceptance() returns ( bool[2] ) {
+    return [work_acceptance.employer, work_acceptance.worker];
+  }
+
 
   /*
   * Ownership control

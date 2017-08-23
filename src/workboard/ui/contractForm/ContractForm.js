@@ -17,7 +17,7 @@ class ContractForm extends Component {
   }
 
   onRteChange(event) {
-    this.setState({rteValue:event})
+    this.setState({rteValue:event, description: event.toString('html')})
   }
 
   onPayoutChange(event){
@@ -39,7 +39,6 @@ class ContractForm extends Component {
       return alert('You must enter a payout, and it must be a number greater than 0.')
     }
     // Save text editor state as a HTML string
-    this.setState({description : event.toString('html')})
     this.props.onContractFormSubmit(this.state)
   }
 

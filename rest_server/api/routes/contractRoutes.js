@@ -7,7 +7,7 @@ module.exports = function(app) {
     .get(contract.get_contracts)
     .post(contract.add_new_contract);
 
-  app.route('/contract/:coinbase')
+  app.route('/contract/:address')
     .get(contract.get_contract_info)
     .post(contract.update_contract_info);
 };

@@ -1,6 +1,7 @@
 import WorkContract from '../../../../build/contracts/WorkContract.json'
 import store from '../../../store'
 import request from 'request-json'
+import { browserHistory } from 'react-router'
 
 const contract = require('truffle-contract')
 // Create JSON client
@@ -33,41 +34,31 @@ export function createWorkContract(state) {
                 newWorkContract.defaults({from:coinbase, gas:Number(4712388)})
                 newWorkContract.new().then(function (instance) 
                 {
-
-                        // Update active contract via dispatch
-                        dispatch(activeContract(instance.address))
-
-                        // Add new contract to database
-                        let contractJSON = {
-                            address:instance.address,
-                            employer:coinbase,
-                            title:state.title,
-                            description:state.description,
-                            type:"Work",
-                            payout:state.payout,
-                            status:"AcceptingOffers"
-                        }
-                        client.post('contract/', contractJSON, function(err, res, body){
-                            if(err)
-                                console.error(err)
-                            return console.log(res.statusCode)
-                        }) 
+                    // Add new contract to database
+                    let contractJSON = {
+                        address:instance.address,
+                        employer:coinbase,
+                        title:state.title,
+                        description:state.description,
+                        type:"Work",
+                        payout:state.payout,
+                        status:"AcceptingOffers"
+                    }
+                    client.post('contract/', contractJSON, function(err, res, body){
+                        if(err)
+                            console.error(err)
+                        return console.log(res.statusCode)
+                    }) 
                         
-                        // Add contract to user's list
-                        client.post('user/'+coinbase, {"contracts":{address: instance.address, role: "Employer"}}, function (err, res, body){
-                            if(err)
-                                console.error(err)
-                            return console.log(res.statusCode)
-                        })
+                    // Add contract to user's list
+                    client.post('user/'+coinbase, {"contracts":{address: instance.address, role: "Employer"}}, function (err, res, body){
+                        if(err)
+                            console.error(err)
+                    })
 
-                })
-
-                // Add new contract to database, and user's contract's
-
-
-                // Update active contract and move user to the contract page
-                dispatch(activeContract())
-                
+                    dispatch(activeContract({address:instance.address, role:'Employer'}))
+                    browserHistory.push('/dashboard')
+                })               
             })
         } else {
             console.log("Web3 it not initialized, user must be logged in via ethereum network to create a contract.")

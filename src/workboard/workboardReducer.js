@@ -1,7 +1,8 @@
 const initialState = {
   contractList: null,
   contractRows: null,
-  activeContract: null
+  activeContract: null,
+  contractPage: null
 }
 
 
@@ -24,7 +25,14 @@ const workBoardReducer = (state = initialState, action) => {
       contractRows: action.payload
     })
   }
-
+  if (action.type === 'UPDATE_CONTRACT_PAGE')
+  {
+    console.log('Updating contract page data')
+    console.log(action.payload)
+    return Object.assign({}, state, {
+      contractPage: action.payload
+    })
+  }
   return state
 }
 
