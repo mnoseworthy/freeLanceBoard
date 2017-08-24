@@ -3,10 +3,10 @@
 */
 import React, { Component } from 'react'
 import store from '../../../store'
-import ObserverViewContainer from '../../ui/observerView/ObserverViewContainer'
-import EmployerViewContainer from '../../ui/employerView/EmployerViewContainer'
-import WorkerViewContainer from '../../ui/workerView/WorkerViewContainer'
-import ReviewerViewContainer from '../../ui/reviewerView/ReviewerViewContainer'
+import ObserverViewContainer from '../../ui/roleViews/observerView/ObserverViewContainer'
+import EmployerViewContainer from '../../ui/roleViews/employerView/EmployerViewContainer'
+import WorkerViewContainer from '../../ui/roleViews/workerView/WorkerViewContainer'
+import ReviewerViewContainer from '../../ui/roleViews/reviewerView/ReviewerViewContainer'
 
 class ContractPage extends Component {
   render() {
