@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import BigNumber from 'bignumber'
 
 class EmployerView extends Component {
   constructor(props) {
@@ -25,24 +26,39 @@ class EmployerView extends Component {
     // Check if the new props involves the data field
     if(nextProps.data !== this.props.data){
       //Update component's stage based on data
-      console.log('componentWillRecieveTest')
-      console.log(nextProps.data.contractData)
       this.setState({stage : nextProps.data.contractData.stage})
     }else{
       console.log('data has not changed')
     }
-    console.log("New props")
-    console.log(nextProps)
   }
 
   render() {
     // Change the interface options based on the current contract stage
     let contract_interface = null;
-    console.log(this.state.stage);
     switch (this.state.stage){
       case 'Loading':
-        console.log('is Loading')
         contract_interface = <p> Loading... </p>;
+        break;
+      case 'AcceptingOffers':
+        contract_interface = <p> AcceptingOffers </p>;
+        break;
+      case 'ReviewContract':
+        contract_interface = <p> ReviewContract </p>;
+        break;
+      case 'GatheringDeposits':
+        contract_interface = <p> GatheringDeposits </p>;
+        break;
+      case 'AwaitingJobCompletion':
+        contract_interface = <p> AwaitingJobCompletion </p>;
+        break;
+      case 'Finalize':
+        contract_interface = <p> Finalize </p>;
+        break;
+      case 'UnderReview':
+        contract_interface = <p> UnderReview </p>;
+        break;
+      case 'Finished':
+        contract_interface = <p> Finished </p>;
         break;
       default:
         console.log(console.log(this.state.stage))

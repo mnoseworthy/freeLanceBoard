@@ -110,7 +110,7 @@ contract WorkContract {
   function getEmployer() constant returns ( address ) {
     return (employer);
   }
-  
+
   /*
   *   .call() functions that cost no gas, are used
   *   to retrieve values.

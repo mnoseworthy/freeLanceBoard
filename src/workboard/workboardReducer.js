@@ -27,8 +27,6 @@ const workBoardReducer = (state = initialState, action) => {
   }
   if (action.type === 'UPDATE_CONTRACT_PAGE')
   {
-    console.log('Updating contract page data')
-    console.log(action.payload)
     return Object.assign({}, state, {
       contractPage: action.payload
     })
