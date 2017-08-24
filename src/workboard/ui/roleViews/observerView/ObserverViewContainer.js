@@ -1,16 +1,21 @@
 import { connect } from 'react-redux'
 import ObserverView from './ObserverView'
+import { getContractData } from './ObserverViewActions'
 
 //import {  } from './ContractRowActions'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    address: state.workboard.activeContract
+    activeContract: state.workboard.activeContract,
+    data: state.workboard.contractPage
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    loadContractData: () => {
+      dispatch(getContractData())
+    }
   }
 }
 

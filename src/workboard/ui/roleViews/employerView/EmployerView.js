@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import BigNumber from 'bignumber'
 
 class EmployerView extends Component {
   constructor(props) {
